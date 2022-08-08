@@ -12,6 +12,6 @@ const attributes = {
   },
 }
 module.exports = (sequelize) => {
-  const categories = sequelize.define('Category', attributes, { tableName: 'Categories' });
+  const categories = sequelize.define('Category', attributes, { tableName: 'Categories', timestamps: false });
   return categories;
 };
