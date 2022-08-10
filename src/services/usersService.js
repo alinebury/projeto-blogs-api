@@ -24,6 +24,15 @@ const usersService = {
     }
   },
 
+  async validateUserId(id) {
+    const result = await models.User.findOne({
+      where: { id },
+    });
+    if (!result) {
+      throwNotFoundError('User not found');
+    }
+  },
+
   async add(data) {
     const modelWithHashedPassword = {
       ...data,
@@ -52,6 +61,12 @@ const usersService = {
       throwNotFoundError('User does not exist');
     }
     return user;
+  },
+
+  async deleteById(id) {
+    await models.User.destroy({
+      where: { id },
+    });
   },
 };
 

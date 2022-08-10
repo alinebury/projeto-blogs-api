@@ -21,9 +21,9 @@ const attributes = {
 
 /** @param {import('sequelize').Sequelize} sequelize */
 module.exports = (sequelize) => {
-  const blogPosts = sequelize.define('BlogPost', attributes, { tableName: 'BlogPost' });
+  const blogPosts = sequelize.define('BlogPost', attributes, { tableName: 'BlogPosts', timestamps: false });
   blogPosts.associate = (models) => {
-    blogPosts.belongsTo(models.User, { foreignKey: 'id', as: 'user' });
+    blogPosts.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
   };
   return blogPosts;
 };
