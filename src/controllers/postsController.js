@@ -2,9 +2,15 @@ const { StatusCodes: HTTP } = require('http-status-codes');
 const postsService = require('../services/postsService');
 
 const postsController = {
-  async add({ body }, res) {
-    const post = await postsService.add(body);
-    res.status(HTTP.OK).json(post);
+  async add(req, res) {
+    const { title, content, categoryIds } = req.body;
+    const { id: userId } = req.user;
+    await postsService.validateBodyPostAdd(req.body);
+    await Promise.all(categoryIds
+      .map(postsService.validateCategory));
+    const post = await postsService.add({ title, content, userId });
+    await postsService.addCategory(post, categoryIds);
+    res.status(HTTP.CREATED).json(post);
   },
 
   async getAll(_req, res) {

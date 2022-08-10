@@ -3,6 +3,7 @@ const { DataTypes } = require('sequelize');
 /** @type {import('sequelize').ModelAttributes} */
 const attributes = {
   id: {
+    autoIncrement: true,
     primaryKey: true,
     type: DataTypes.INTEGER
   },
@@ -15,8 +16,8 @@ const attributes = {
       key: 'id'
     }
   },
-  published: { type: DataTypes.DATE },
-  updated: {type: DataTypes.DATE },
+  published: { type: DataTypes.DATE, defaultValue: new Date() },
+  updated: {type: DataTypes.DATE, defaultValue: new Date() },
 };
 
 /** @param {import('sequelize').Sequelize} sequelize */

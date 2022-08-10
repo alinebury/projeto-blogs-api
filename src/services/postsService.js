@@ -1,16 +1,37 @@
 const Joi = require('joi');
 const { Op } = require('sequelize');
 const models = require('../database/models');
-const { throwUnauthorizedError, throwNotFoundError } = require('../middlewares/utils');
+const { throwUnauthorizedError,
+  throwNotFoundError, throwValidationError } = require('../middlewares/utils');
 
 const postsService = {
-  async validateUser(id, userId) {
-    const result = await models.BlogPost.findOne({
+  async validateBodyPostAdd(data) {
+    const schema = Joi.object({
+      title: Joi.string().required(),
+      content: Joi.string().required(),
+      categoryIds: Joi.array().required().items(Joi.number().required().positive()),
+    }).messages({
+      'any.required': 'Some required fields are missing',
+      'string.empty': 'Some required fields are missing',
+    });
+    await schema.validateAsync(data);
+  },
+
+  async validateCategory(id) {
+    const result = await models.Category.findOne({
+      raw: true,
+      where: { id },
+    });
+    if (!result) throwValidationError('"categoryIds" not found');
+  },
+
+  async validateUser(id, user) {
+    const { userId } = await models.BlogPost.findOne({
       raw: true,
       where: { id },
       attributes: ['userId'],
     });
-    if (result !== userId) {
+    if (user !== userId) {
       throwUnauthorizedError('Unauthorized user');
     }
   },
@@ -35,7 +56,14 @@ const postsService = {
 
   async add(data) {
     const post = await models.BlogPost.create(data);
-    return post;
+    return post.toJSON();
+  },
+
+  async addCategory({ id }, categories) {
+    await Promise.all(categories.map((categoryId) => models.PostCategory.create({
+        postId: id,
+        categoryId,
+      })));
   },
 
   async getAll() {

@@ -15,6 +15,7 @@ const errors = {
  */
 const errorHandlerMiddleware = ({ name, message }, _req, res, _next) => {
   const status = errors[name];
+  console.log(name, message);
   if (!status) return res.sendStatus(500);
   res.status(status).json({ message });
 };
