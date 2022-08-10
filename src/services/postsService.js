@@ -107,11 +107,11 @@ const postsService = {
     return post;
   },
 
-  async edit(data, id) {
+  async edit({ title, content }, id) {
     await models.BlogPost.update(
       { 
-        title: data.title,
-        content: data.content,
+        title,
+        content,
       },
       { 
         where: { id },
@@ -129,7 +129,7 @@ const postsService = {
   },
 
   async search(q) {
-    const query = await models.BlogPost.findOne({
+    const query = await models.BlogPost.findAll({
       where: { [Op.or]: {
           title: { [Op.like]: `%${q}%` },
           content: { [Op.like]: `%${q}%` } },
